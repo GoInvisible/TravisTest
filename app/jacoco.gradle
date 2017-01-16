@@ -1,0 +1,34 @@
+apply plugin: 'jacoco'
+
+jacoco {
+    toolVersion = '0.7.6.201602180812'
+}
+
+task androidTestReport(type: JacocoReport, dependsOn: "connectedAndroidTest") {
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports for instrumentation tests"
+
+    classDirectories = fileTree(
+            dir: "$projectDir/build/intermediates/classes/debug",
+            excludes: ['**/R.class',
+                       '**/R$*.class',
+                       '**/*$ViewInjector*.*',
+                       '**/BuildConfig.*',
+                       '**/model/*.*',
+                       '**/database/*.*',
+                       '**/Manifest*.*',
+                       '**/realm/*.*']
+    )
+
+    sourceDirectories = files("$projectDir/src/main/java")
+    executionData = fileTree(dir: project.projectDir, includes: ['**/*.ec'])
+
+
+    reports {
+        html.enabled = true
+    }
+
+    doLast({
+        println "Report file: file://$projectDir/build/reports/jacoco/androidTestReport/html/index.html"
+    })
+}
